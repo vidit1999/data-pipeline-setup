@@ -1,13 +1,16 @@
 # Data Pipeline Setup
 ## Introduction
-This is a complete data pipeline setup, done using docker and docker-compose. It runs below components. On how these components interact with each other, in shown in this image.
+This is a complete data pipeline setup, done using docker and docker-compose. It runs below components.
 * Airflow
 * Confluent Kafka Broker
 * Confluent Kafka Connect
 * Kafka UI
 * Local Stack S3
 * Jupyter Lab
-* Backend Service
+* Config Backend Service
+
+Bewlo image show how these components interact with each other at hight level.
+![Service Interactions](/Images/Diagrapm.png)
 
 ## Service Setup
 * Make sure you have docker setup done and have docker compose installed and updated.
@@ -24,7 +27,7 @@ This is a complete data pipeline setup, done using docker and docker-compose. It
 | Kafka UI          | http://localhost:9080/        |
 | Jupyter Lab       | http://localhost:8888/        |
 | Backend Swagger   | http://localhost:8000/docs/   |
-> Direct shell in service container can also be accessed. Check `make <service>-shell` commands.
+> Direct shell in service containers can also be accessed. Check `make <service>-shell` commands in `Makefile`.
 
 ## Starting First Pipeline
 * You can create a new table or use one of the existing ones present in airflow.
@@ -88,6 +91,7 @@ curl -X 'POST' \
 }'
 ```
 * Go to the Airflow UI and open `frequency_one` DAG. You will see the Airflow tasks for the table. Resume the DAG and trigger it. It will start the data pipeline.
+> Check the Swagger of Backend Servive to know what all configs can be passed and what other APIs can be accessed.
 
 ## Querying Table
 * Open the Jupyter Lab UI. There you can see an see `QueryLakeTable.ipynb` file.
