@@ -108,3 +108,4 @@ curl -X 'POST' \
 ## Considerations
 * `frequency_one` DAG is not having any schedule. This is because we are running in local for testing purpose.
 * Before you start onboarding new tables, make sure you increase docker VM memory.
+
