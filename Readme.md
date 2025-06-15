@@ -14,7 +14,7 @@ Bewlo image show how these components interact with each other at hight level.
 
 ## Service Setup
 * Make sure you have docker setup done and have docker compose installed and updated.
-* Make sure tat docker VM have atleast 6GB of memory. Higher is better.
+* Make sure that docker VM have atleast 6GB of memory. Higher is better.
 * Clone this repo and `cd` into it.
 * Create a `.env` file with the contents of `sample.env` file.
 * Run `make start` and this should start the all the services. This also setups the s3 bucket we will be using.
@@ -63,7 +63,7 @@ curl -X POST -H "Content-Type: application/json" --data '{
 ```
 * Visit Airflow UI and resume `continuous_python_dag`. This just a dummy DAG which runs continously, so that `task_instance` table gets continous table. Check Kafka UI once to see the messages.
 > Make sure to pause the `continuous_python_dag` after some time.
-* Now you can onboard `task_instance` table by using `/configs` endpoint in Swagger UI. Or by using below curl directly in terminal.
+* Now you can onboard `task_instance` table by using `POST /configs` endpoint in Swagger UI. Or by using below curl directly in terminal.
 ```shell
 curl -X 'POST' \
   'http://localhost:8000/configs/' \
