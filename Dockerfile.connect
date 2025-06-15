@@ -1,0 +1,7 @@
+FROM confluentinc/cp-kafka-connect:7.9.0
+
+# 2. Install the Debezium PostgreSQL connector
+#    - --no-prompt suppresses interactive prompts
+#    - installs into /usr/share/confluent-hub-components
+RUN confluent-hub install --no-prompt \
+      debezium/debezium-connector-postgresql:3.1.2

@@ -1,0 +1,8 @@
+FROM apache/airflow:slim-2.11.0-python3.12
+
+RUN pip install --no-cache-dir \
+apache-airflow==2.11.0 psycopg2-binary \
+apache-airflow-providers-docker \
+apache-airflow-providers-celery \
+--constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.11.0/constraints-3.12.txt"
+

@@ -1,0 +1,15 @@
+FROM python:3.13.5-slim-bookworm
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+confluent-kafka==2.9.0 boto3==1.38.36 awscli==1.40.35 \
+fastapi[standard]==0.115.12 sqlmodel==0.0.24 \
+psycopg2-binary==2.9.10
+
+COPY main.py main.py
+COPY dump.py dump.py
+
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

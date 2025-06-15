@@ -1,0 +1,28 @@
+FROM bitnami/spark:3.5.6-debian-12-r1
+
+USER root
+
+ENV SPARK_JARS_DIR=/opt/bitnami/spark/jars
+
+RUN pip install  --no-cache-dir \
+boto3==1.38.36 awscli==1.40.35 \
+confluent-kafka==2.9.0 jupyterlab==4.4.3 \
+pandas==2.3.0 delta-spark==3.3.2 psycopg2-binary==2.9.10
+
+RUN \
+curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.3/spark-sql-kafka-0-10_2.12-3.5.3.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.0/jsr305-3.0.0.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.4.1/kafka-clients-3.4.1.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.3/spark-token-provider-kafka-0-10_2.12-3.5.3.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/org/apache/spark/spark-tags_2.12/3.5.3/spark-tags_2.12-3.5.3.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/io/delta/delta-spark_2.12/3.3.2/delta-spark_2.12-3.3.2.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/io/delta/delta-storage/3.3.2/delta-storage-3.3.2.jar \
+&& curl -fSLO --output-dir "${SPARK_JARS_DIR}" https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.12.262/aws-java-sdk-core-1.12.262.jar
+
+RUN mv conf/log4j2.properties.template conf/log4j2.properties && \
+    sed -i 's/rootLogger.level = info/rootLogger.level = error/' conf/log4j2.properties
+
+
+COPY append_pipeline.py append_pipeline.py
+COPY upsert_pipeline.py upsert_pipeline.py

@@ -1,0 +1,4 @@
+FROM localstack/localstack:s3-latest
+
+RUN pip install "awscli-local[ver1]"
+
