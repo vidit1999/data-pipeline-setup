@@ -92,11 +92,13 @@ curl -X 'POST' \
 ```
 * Go to the Airflow UI and open `frequency_one` DAG. You will see the Airflow tasks for the table. Resume the DAG and trigger it. It will start the data pipeline.
 > Check the Swagger of Backend Servive to know what all configs can be passed and what other APIs can be accessed.
+![Airflow DAG Graph](/Images/AirflowUI.png)
 
 ## Querying Table
 * Open the Jupyter Lab UI. There you can see an see `QueryLakeTable.ipynb` file.
 * It has some example spark commands to query the delta tables.
 * Make adjusments accordingly.
+![Query Results](/Images/QueryResults.png)
 
 ## DQ Checking
 * Open `DQCheck.ipynb` file in Jupyter Lab UI.
