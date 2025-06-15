@@ -8,7 +8,6 @@ fastapi[standard]==0.115.12 sqlmodel==0.0.24 \
 psycopg2-binary==2.9.10
 
 COPY main.py main.py
-COPY dump.py dump.py
 
 EXPOSE 8000
 
