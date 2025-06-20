@@ -1,4 +1,4 @@
-.PHONY: docker-config start stop clean connect-shell pg-shell be-shell localstack-shell jupyter-shell
+.PHONY: docker-config start stop clean stats connect-shell pg-shell be-shell localstack-shell jupyter-shell
 
 
 docker-config:
@@ -12,6 +12,9 @@ stop:
 
 clean:
 	docker compose -f docker-compose.yml down -v
+
+stats:
+	docker compose stats
 
 connect-shell:
 	docker compose exec -it connect bash
