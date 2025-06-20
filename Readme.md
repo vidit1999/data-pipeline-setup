@@ -9,7 +9,7 @@ This is a complete data pipeline setup, done using docker and docker-compose. It
 * Jupyter Lab
 * Config Backend Service
 
-Bewlo image show how these components interact with each other at hight level.
+Below image show how these components interact with each other at hight level.
 ![Service Interactions](/Images/Diagrapm.png)
 
 ## Service Setup
@@ -61,7 +61,7 @@ curl -X POST -H "Content-Type: application/json" --data '{
   }
 }' http://localhost:8083/connectors
 ```
-* Visit Airflow UI and resume `continuous_python_dag`. This just a dummy DAG which runs continously, so that `task_instance` table gets continous table. Check Kafka UI once to see the messages.
+* Visit Airflow UI and resume `continuous_python_dag`. This just a dummy DAG which runs continously, so that `task_instance` table gets continous updates. Check Kafka UI once to see the messages.
 > Make sure to pause the `continuous_python_dag` after some time.
 * Now you can onboard `task_instance` table by using `POST /configs` endpoint in Swagger UI. Or by using below curl directly in terminal.
 ```shell
@@ -74,8 +74,8 @@ curl -X 'POST' \
   "topic_name": "postgres.public.task_instance",
   "transformations": [
     {
-      "name": "upper",
-      "op_column": "hostname"
+      "col_expr": "upper(hostname)",
+      "col_name": "hostname"
     }
   ],
   "mode": "upsert",
