@@ -118,13 +118,6 @@ def extract_ymd(df, ts_col):
     return df_with_date_parts
 
 
-# Maps transformation name to spark function
-transformation_mapper = {
-    "lower": F.lower,
-    "upper": F.upper,
-}
-
-
 ################################################
 
 pipeline_config_id = sys.argv[1]
@@ -167,10 +160,10 @@ def process_df(batch_df, batch_id):
     if pipeline_mode == "append":
         # we have to do transformations here only.
         for transformation in transformations:
-            name = transformation["name"]
-            op_column = transformation["op_column"]
-            if op_column in df2.columns and name in transformation_mapper:
-                df2 = df2.withColumn(op_column, transformation_mapper[name](op_column))
+            col_name = transformation["col_name"]
+            col_expr = transformation["col_expr"]
+            if col_name in source_df.columns:
+                source_df = source_df.withColumn(col_name, F.expr(col_expr))
 
     # Write the DataFrame to Delta Lake in append mode, partitioned by year, month, day
     df2.write \

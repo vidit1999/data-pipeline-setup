@@ -31,75 +31,6 @@ spark = (
 )
 
 
-
-
-def flatten_json(d, cast_string):
-    """
-    Flattens a JSON dictionary all the way down with '__' as a separator,
-    except for lists, which are converted to JSON strings. All non-list
-    values are cast to strings.
-
-    Args:
-        d (dict): The input JSON dictionary.
-
-    Returns:
-        dict: The flattened dictionary.
-    """
-    flat_dict = {}
-    # Use a stack for iterative flattening to avoid deep recursion for very large objects
-    # Each item in the stack is a tuple: (current_object, current_prefix)
-    stack = [(d, "")]
-
-    while stack:
-        current_obj, current_prefix = stack.pop()
-
-        for key, value in current_obj.items():
-            # Construct the new key, adding separator if a prefix exists
-            new_key = f"{current_prefix}__{key}" if current_prefix else key
-
-            if isinstance(value, dict):
-                # If the value is a dictionary, add it to the stack for further flattening
-                stack.append((value, new_key))
-            elif isinstance(value, list):
-                # If the value is a list, convert it to a JSON string
-                flat_dict[new_key] = json.dumps(value)
-            else:
-                # For all other types, cast to string
-                flat_dict[new_key] = str(value) if cast_string else value
-    return flat_dict
-
-
-@F.udf
-def parse_value(value, cast_string):
-    d = json.loads(value)
-    values = {}
-    if d.get("op") == "d":
-        # take before key
-        values.update(d.get("before") or {})
-        values.update({"__op": "d"})
-    else:
-        values.update(d.get("after") or {})
-        values.update({"__op": d.get("op")})
-
-    return json.dumps(flatten_json(values, cast_string))
-
-
-def get_select_expressions(df):
-    # Build the select expression list
-    select_expressions = []
-
-    # Add all fields from the 'value' struct directly
-    select_expressions.append("value.*")
-
-    # Add other top-level columns with '__' prefix
-    for field in df.schema.fields:
-        if field.name != "value":
-            select_expressions.append(F.col(field.name).alias(f"__{field.name}"))
-
-    # Apply the transformations
-    return df.select(select_expressions)
-
-
 def extract_ymd(df, ts_col):
     df_with_timestamp = df.withColumn(
         ts_col,
@@ -113,11 +44,6 @@ def extract_ymd(df, ts_col):
 
     return df_with_date_parts
 
-# Maps transformation name to spark function
-transformation_mapper = {
-    "lower": F.lower,
-    "upper": F.upper,
-}
 
 
 ################################################
@@ -162,10 +88,10 @@ def process_df(batch_df, batch_id):
         source_df = extract_ymd(source_df, partition_col)
 
     for transformation in transformations:
-        name = transformation["name"]
-        op_column = transformation["op_column"]
-        if op_column in source_df.columns and name in transformation_mapper:
-            source_df = source_df.withColumn(op_column, transformation_mapper[name](op_column))
+        col_name = transformation["col_name"]
+        col_expr = transformation["col_expr"]
+        if col_name in source_df.columns:
+            source_df = source_df.withColumn(col_name, F.expr(col_expr))
 
     # Perform the merge operation
     if not DeltaTable.isDeltaTable(spark, write_location):

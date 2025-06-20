@@ -36,15 +36,15 @@ class Mode(str, Enum):
     APPEND = "append"
 
 class Transformation(TypedDict):
-    name: str
-    op_column: str
+    col_name: str
+    col_expr: str
 
 class PipelineConfigBase(SQLModel):
     """Base model for pipeline configuration."""
     is_rds: bool = Field(description="Is the data source an RDS instance?")
     topic_name: str = Field(index=True, unique=True, description="The name of the Kafka topic or similar source.")
     transformations: List[Transformation] = Field(default_factory=list, sa_column=Column(JSON),
-                                      description="List of column transformations (e.g., {'name': 'lower', op_column: 'user_name'}).")
+                                      description="List of column transformations (e.g., {col_expr: lower('user_name'), col_name: 'user_name'}).")
 
     mode: Mode = Field(description="Data loading mode: 'upsert' or 'append'.")
     primary_keys: List[str] = Field(default_factory=list, sa_column=Column(JSON),
@@ -114,7 +114,7 @@ class PipelineConfigUpdate(SQLModel):
     """
     is_rds: Optional[bool] = None
     # topic_name: Optional[str] = None
-    transformations: Optional[List[str]] = None
+    transformations: Optional[List[Transformation]] = None
     mode: Optional[Mode] = None
     primary_keys: Optional[List[str]] = None
     infer_schema: Optional[bool] = None
